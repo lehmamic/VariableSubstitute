@@ -31,7 +31,7 @@ namespace VariableSubstitute
 
     internal class VariableProcessor
     {
-        private readonly Regex replaceRegex = new Regex(@"\$\{(?<variable>[a-zA-Z]+)\}");
+        private readonly Regex replaceRegex = new Regex(@"\$\{(?<variable>[a-zA-Z]+)(\:[^\}]+)?\}");
 
         private readonly IDictionary<string, string> variables;
 
