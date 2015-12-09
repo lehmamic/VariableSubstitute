@@ -7,7 +7,7 @@ namespace VariableSubstitute
     {
         public Variable(string name, string value)
         {
-            if (Regex.IsMatch(name, "[a-zA-Z]+"))
+            if (!Regex.IsMatch(name, "[a-zA-Z]+"))
             {
                 throw new ArgumentException("The variable name is null, empty or contains non characters [a-z, A-Z], please provide a meaningfull variable name.", nameof(name));
             }

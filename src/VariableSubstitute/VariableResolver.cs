@@ -6,14 +6,12 @@ using System.Text.RegularExpressions;
 namespace VariableSubstitute
 {
     public class VariableResolver
-    {
-        private readonly Regex replaceRegex = new Regex(@"(<variable>?${[a-zA-Z]+})");
-
-        public string Resolve(string value, Variable[] variables)
+    { 
+        public string Resolve(string content, Variable[] variables)
         {
-            if (value == null)
+            if (content == null)
             {
-                throw new ArgumentNullException(nameof(value));
+                throw new ArgumentNullException(nameof(content));
             }
 
             if (variables == null)
@@ -26,15 +24,14 @@ namespace VariableSubstitute
                 throw new ArgumentException("One or more variables are null.", nameof(variables));
             }
 
-            Dictionary<string, string> variableLookup = variables.ToDictionary(v => v.Name, v => v.Value);
-
-            return null;
+            var processor = new VariableProcessor(variables);
+            return processor.Resolve(content);
         }
     }
 
     internal class VariableProcessor
     {
-        private readonly Regex replaceRegex = new Regex(@"\${(<variable>?[a-zA-Z]+)}");
+        private readonly Regex replaceRegex = new Regex(@"\$\{(?<variable>[a-zA-Z]+)\}");
 
         private readonly IDictionary<string, string> variables;
 

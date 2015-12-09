@@ -135,7 +135,7 @@
       },
       "VariableSubstitute/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1"
+        "framework": "DNX,Version=v4.5.1"
       },
       "xunit/2.1.0": {
         "type": "package",
@@ -1012,7 +1012,7 @@
       },
       "VariableSubstitute/1.0.0": {
         "type": "project",
-        "framework": ".NETPlatform,Version=v5.4",
+        "framework": "DNXCore,Version=v5.0",
         "dependencies": {
           "Microsoft.CSharp": "4.0.1-beta-23516",
           "System.Collections": "4.0.11-beta-23516",
@@ -1318,7 +1318,7 @@
       },
       "VariableSubstitute/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1"
+        "framework": "DNX,Version=v4.5.1"
       },
       "xunit/2.1.0": {
         "type": "package",
@@ -1563,7 +1563,7 @@
       },
       "VariableSubstitute/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1"
+        "framework": "DNX,Version=v4.5.1"
       },
       "xunit/2.1.0": {
         "type": "package",
@@ -2798,7 +2798,7 @@
       },
       "VariableSubstitute/1.0.0": {
         "type": "project",
-        "framework": ".NETPlatform,Version=v5.4",
+        "framework": "DNXCore,Version=v5.0",
         "dependencies": {
           "Microsoft.CSharp": "4.0.1-beta-23516",
           "System.Collections": "4.0.11-beta-23516",
@@ -4094,7 +4094,7 @@
       },
       "VariableSubstitute/1.0.0": {
         "type": "project",
-        "framework": ".NETPlatform,Version=v5.4",
+        "framework": "DNXCore,Version=v5.0",
         "dependencies": {
           "Microsoft.CSharp": "4.0.1-beta-23516",
           "System.Collections": "4.0.11-beta-23516",
