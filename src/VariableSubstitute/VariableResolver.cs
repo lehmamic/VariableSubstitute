@@ -31,7 +31,7 @@ namespace VariableSubstitute
 
     internal class VariableProcessor
     {
-        private readonly Regex replaceRegex = new Regex(@"\$\{(?<variable>[a-zA-Z]+)(\:[^\}]+)?\}");
+        private readonly Regex replaceRegex = new Regex(@"\$\{(?<variablename>[a-zA-Z]+)(\:(?<defaultvalue>[^\{\}]+))?\}");
 
         private readonly IDictionary<string, string> variables;
 
@@ -62,7 +62,20 @@ namespace VariableSubstitute
                 throw new ArgumentNullException(nameof(match));
             }
 
-            return this.variables[match.Groups["variable"].Value];
+            var variableName = match.Groups["variablename"].Value;
+
+            string value = match.Value;
+
+            if (this.variables.ContainsKey(variableName))
+            {
+                value = this.variables[variableName];
+            }
+            else if (match.Groups["defaultvalue"].Success)
+            {
+                value = match.Groups["defaultvalue"].Value;
+            }
+
+            return value;
         }
     }
 }
