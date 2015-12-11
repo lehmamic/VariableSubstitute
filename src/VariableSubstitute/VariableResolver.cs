@@ -68,11 +68,11 @@ namespace VariableSubstitute
 
             if (this.variables.ContainsKey(variableName))
             {
-                value = this.variables[variableName];
+                value = this.Resolve(this.variables[variableName]);
             }
             else if (match.Groups["defaultvalue"].Success)
             {
-                value = match.Groups["defaultvalue"].Value;
+                value = this.Resolve(match.Groups["defaultvalue"].Value);
             }
 
             return value;

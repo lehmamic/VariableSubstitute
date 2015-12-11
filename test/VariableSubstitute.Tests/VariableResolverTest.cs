@@ -65,5 +65,23 @@ namespace VariableSubstitute.Tests
             // assert
             Assert.Equal("This test contains a variable 'MyVar' with the value ${MyVar}.", actual);
         }
+
+        [Fact]
+        public void Resolve_VariableUsesVariable_ResolvesValueRecursive()
+        {
+            // arrange
+            var target = new VariableResolver();
+            var variables = new[]
+            {
+                new Variable("MyVar", "This Variable uses another variable ${OtherVar}"),
+                new Variable("OtherVar", "OtherValue")
+            };
+
+            // act
+            string actual = target.Resolve("This test contains a variable 'MyVar' with the value [${MyVar}].", variables);
+
+            // assert
+            Assert.Equal("This test contains a variable 'MyVar' with the value [This Variable uses another variable OtherValue].", actual);
+        }
     }
 }
