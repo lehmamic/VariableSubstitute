@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace VariableSubstitute
@@ -31,9 +33,9 @@ namespace VariableSubstitute
 
     internal class VariableProcessor
     {
-        private readonly Regex replaceRegex = new Regex(@"\$\{(?<variablename>[a-zA-Z]+)(\:(?<defaultvalue>[^\{\}]+))?\}");
+        private static readonly Regex replaceRegex = new Regex(@"\$\{(?<variablename>[a-zA-Z]+)(\:(?<defaultvalue>[^\{\}]+))?\}");
 
-        private readonly IDictionary<string, string> variables;
+        private readonly IDictionary<string, Variable> variables;
 
         public VariableProcessor(Variable[] variables)
         {
@@ -42,7 +44,7 @@ namespace VariableSubstitute
                 throw new ArgumentNullException(nameof(variables));
             }
 
-            this.variables = variables.ToDictionary(v => v.Name, v => v.Value);
+            this.variables = variables.ToDictionary(v => v.Name, v => v);
         }
 
         public string Resolve(string content)
@@ -52,10 +54,16 @@ namespace VariableSubstitute
                 throw new ArgumentNullException(nameof(content));
             }
 
-            return this.replaceRegex.Replace(content, this.MatchEvaluator);
+            var context = new VariableContext(new ReadOnlyDictionary<string, Variable>(this.variables));
+            return InnerResolve(content, context);
         }
 
-        private string MatchEvaluator(Match match)
+        private static string InnerResolve(string content, VariableContext context)
+        {
+            return replaceRegex.Replace(content, match => MatchEvaluator(match, context));
+        }
+
+        private static string MatchEvaluator(Match match, VariableContext context)
         {
             if (match == null)
             {
@@ -63,19 +71,45 @@ namespace VariableSubstitute
             }
 
             var variableName = match.Groups["variablename"].Value;
+            if (context.CallStack.Contains(variableName))
+            {
+                throw new InvalidOperationException($"Circuar reference of the variable {variableName} detected.");
+            }
+
+            context.CallStack.Push(variableName);
 
             string value = match.Value;
 
-            if (this.variables.ContainsKey(variableName))
+            if (context.Variables.ContainsKey(variableName))
             {
-                value = this.Resolve(this.variables[variableName]);
+                value = InnerResolve(context.Variables[variableName].Value, context);
             }
             else if (match.Groups["defaultvalue"].Success)
             {
-                value = this.Resolve(match.Groups["defaultvalue"].Value);
+                value = InnerResolve(match.Groups["defaultvalue"].Value, context);
             }
+
+            context.CallStack.Pop();
 
             return value;
         }
+    }
+
+    internal class VariableContext
+    {
+        public VariableContext(IReadOnlyDictionary<string, Variable> variables)
+        {
+            if (variables == null)
+            {
+                throw new ArgumentNullException(nameof(variables));
+            }
+
+            this.Variables = variables;
+        }
+
+
+        public IReadOnlyDictionary<string, Variable> Variables { get; }
+
+        public Stack<string> CallStack { get; } = new Stack<string>();
     }
 }

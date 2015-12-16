@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace VariableSubstitute.Tests
 {
@@ -53,7 +54,7 @@ namespace VariableSubstitute.Tests
         }
 
         [Fact]
-        public void Resolve_WetherVariableNorDefaultValueSpecified_ReturnsOriginalString()
+        public void Resolve_WhetherVariableNorDefaultValueSpecified_ReturnsOriginalString()
         {
             // arrange
             var target = new VariableResolver();
@@ -82,6 +83,20 @@ namespace VariableSubstitute.Tests
 
             // assert
             Assert.Equal("This test contains a variable 'MyVar' with the value [This Variable uses another variable OtherValue].", actual);
+        }
+
+        [Fact]
+        public void Resolve_CircularVariableDependency_ThrowsException()
+        {
+            // arrange
+            var target = new VariableResolver();
+            var variables = new[]
+            {
+                new Variable("MyVar", "This Variable uses another variable ${MyVar}")
+            };
+
+            // act
+            Assert.Throws<InvalidOperationException>(() =>target.Resolve("This test contains a variable 'MyVar' with the value [${MyVar}].", variables));
         }
     }
 }
